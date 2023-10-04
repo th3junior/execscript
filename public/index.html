@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scripts</title>
+</head>
+<body>
+    <ul id="lista">
+        
+    </ul>
+
+<script>
+
+function getscripts(){
+fetch('http://localhost:3001/scripts')
+    .then(response => response.json()) 
+    .then(json => {
+        var getul = document.getElementById("lista");
+        json.forEach(element => {
+        getul.insertAdjacentHTML("beforeend","<li><a href='/execute/"+element+"'>"+element+"</a></li>")
+        console.log(element);
+        });
+        console.log(json);
+        console.log(getul);
+    })
+    .catch(err => console.log(err));
+}
+ getscripts();
+</script>
+
+</body>
+</html>
