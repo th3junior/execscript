@@ -39,6 +39,14 @@ W::::::W                           W::::::W               l:::::l               
             </div>
         </div>
         <div class="row p-2">
+            <div class="col lista" id="lista">
+                <ul id="lista">
+
+                </ul>
+            </div>
+        </div>
+
+        <div class="row p-2">
             <div class="col-10">
                 <textarea class="form-control shadow-none commands " placeholder="//>" id="commands"></textarea>
             </div>
@@ -61,13 +69,15 @@ W::::::W                           W::::::W               l:::::l               
     <script>
         var terminal = document.getElementById('terminal');
         var commands = document.getElementById('commands');
+        var lista = document.getElementById('lista');
 
         async function send() {
 
             var coms = commands.value.split('\n');
             for (let i = 0; i < coms.length; i++) {
                 const element = coms[i];
-                await exec(element);
+                if(element.length > 0)
+                    await exec(element);
                 
             }
         }
@@ -82,8 +92,6 @@ W::::::W                           W::::::W               l:::::l               
             })
             .then((response) => response.json())
             .then((response) => {
-
-
                 if(response.stderr.length > 0)
                     terminal.innerHTML += `${response.stderr}`;
 
@@ -97,7 +105,32 @@ W::::::W                           W::::::W               l:::::l               
             terminal.innerHTML += `</br><font color="red"><font color="yellow">//> ${datef.toLocaleString()}</font> -> <font color="orange">${difference}ms</font> -> ${command}</font></br>`;
             terminal.scrollTop = terminal.scrollHeight;
 
+            
         }
+
+        async function files() {
+            await fetch('/scripts')
+            .then((response) => response.json())
+            .then((response) => {
+                console.log(response);
+                response.forEach(element => {
+                    lista.innerHTML += `<li><a href="#" onclick="load('${element}')">${element}</a></li>`;
+                });
+            });
+            
+        }
+        async function load(file) {
+            commands.innerHTML = "";
+
+            await fetch(`/scripts/${file}`)
+            .then((response) => response.text())
+            .then((response) => {
+                commands.innerHTML += response;
+            });
+        }
+
+
+        files()
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

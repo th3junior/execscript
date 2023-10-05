@@ -17,7 +17,16 @@ body {
     overflow-y: scroll;
     white-space: pre-wrap;
     border: 1px solid #00ff00;
+    padding: 5px;
+    border-radius: 5px;
 
+}
+.lista li{
+    display: inline;
+    padding: 5px;
+    border: 1px solid #00eb00;
+    margin-right: 15px;
+    border-radius: 5px;
 }
 .commandtxt {
     color: red;
@@ -55,16 +64,16 @@ body {
     border-color: #00ff00;
 }
 .form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: red;
+    color: #00ff00;
     opacity: 1; /* Firefox */
 }
 
 .form-control:-ms-input-placeholder { /* Internet Explorer 10-11 */
-    color: red;
+    color: #00ff00;
 }
 
 .form-control::-ms-input-placeholder { /* Microsoft Edge */
-    color: red;
+    color: #00ff00;
 }
 
 /* width */
