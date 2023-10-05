@@ -3,31 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scripts</title>
+    <title>Controle Servidor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./style.css" rel="stylesheet">
 </head>
 <body>
-    <ul id="lista">
-        
-    </ul>
 
-<script>
+    <div class="container box">
+        <div class="row p-2">
+            <div class="col logo" align="center">
+                <pre>
+WWWWWWWW                           WWWWWWWW               lllllll                                                               CCCCCCCCCCCCC                                                         
+W::::::W                           W::::::W               l:::::l                                                            CCC::::::::::::C                                                         
+W::::::W                           W::::::W               l:::::l                                                          CC:::::::::::::::C                                                         
+W::::::W                           W::::::W               l:::::l                                                         C:::::CCCCCCCC::::C                                                         
+ W:::::W           WWWWW           W:::::Waaaaaaaaaaaaa    l::::lrrrrr   rrrrrrrrr   uuuuuu    uuuuuu      ssssssssss    C:::::C       CCCCCC   ooooooooooo   rrrrr   rrrrrrrrr   ppppp   ppppppppp   
+  W:::::W         W:::::W         W:::::W a::::::::::::a   l::::lr::::rrr:::::::::r  u::::u    u::::u    ss::::::::::s  C:::::C               oo:::::::::::oo r::::rrr:::::::::r  p::::ppp:::::::::p  
+   W:::::W       W:::::::W       W:::::W  aaaaaaaaa:::::a  l::::lr:::::::::::::::::r u::::u    u::::u  ss:::::::::::::s C:::::C              o:::::::::::::::or:::::::::::::::::r p:::::::::::::::::p 
+    W:::::W     W:::::::::W     W:::::W            a::::a  l::::lrr::::::rrrrr::::::ru::::u    u::::u  s::::::ssss:::::sC:::::C              o:::::ooooo:::::orr::::::rrrrr::::::rpp::::::ppppp::::::p
+     W:::::W   W:::::W:::::W   W:::::W      aaaaaaa:::::a  l::::l r:::::r     r:::::ru::::u    u::::u   s:::::s  ssssss C:::::C              o::::o     o::::o r:::::r     r:::::r p:::::p     p:::::p
+      W:::::W W:::::W W:::::W W:::::W     aa::::::::::::a  l::::l r:::::r     rrrrrrru::::u    u::::u     s::::::s      C:::::C              o::::o     o::::o r:::::r     rrrrrrr p:::::p     p:::::p
+       W:::::W:::::W   W:::::W:::::W     a::::aaaa::::::a  l::::l r:::::r            u::::u    u::::u        s::::::s   C:::::C              o::::o     o::::o r:::::r             p:::::p     p:::::p
+        W:::::::::W     W:::::::::W     a::::a    a:::::a  l::::l r:::::r            u:::::uuuu:::::u  ssssss   s:::::s  C:::::C       CCCCCCo::::o     o::::o r:::::r             p:::::p    p::::::p
+         W:::::::W       W:::::::W      a::::a    a:::::a l::::::lr:::::r            u:::::::::::::::uus:::::ssss::::::s  C:::::CCCCCCCC::::Co:::::ooooo:::::o r:::::r             p:::::ppppp:::::::p
+          W:::::W         W:::::W       a:::::aaaa::::::a l::::::lr:::::r             u:::::::::::::::us::::::::::::::s    CC:::::::::::::::Co:::::::::::::::o r:::::r             p::::::::::::::::p 
+           W:::W           W:::W         a::::::::::aa:::al::::::lr:::::r              uu::::::::uu:::u s:::::::::::ss       CCC::::::::::::C oo:::::::::::oo  r:::::r             p::::::::::::::pp  
+            WWW             WWW           aaaaaaaaaa  aaaallllllllrrrrrrr                uuuuuuuu  uuuu  sssssssssss            CCCCCCCCCCCCC   ooooooooooo    rrrrrrr             p::::::pppppppp    
+                                                                                                                                                                                   p:::::p            
+                                                                                                                                                                                   p:::::p            
+                                                                                                                                                                                  p:::::::p           
+                                                                                                                                                                                  p:::::::p           
+                                                                                                                                                                                  p:::::::p           
+                                                                                                                                                                                  ppppppppp           
+                </pre>
+            </div>
+        </div>
+        <div class="row p-2">
+            <div class="col-10">
+                <textarea class="form-control shadow-none commands " placeholder="//>" id="commands"></textarea>
+            </div>
+            <div class="col">
+                <button class="btn btn-primary btn_send" onclick="send()">Enviar</button>
+            </div>
+            </div>
+        <div class="row p-2">
+            <div class="col">
+                <div class="terminal" id="terminal"></div>
+            </div>
+        </div>
+    </div>
 
-function getscripts(){
-fetch('http://localhost:3001/scripts')
-    .then(response => response.json()) 
-    .then(json => {
-        var getul = document.getElementById("lista");
-        json.forEach(element => {
-        getul.insertAdjacentHTML("beforeend","<li><a href='/execute/"+element+"'>"+element+"</a></li>")
-        console.log(element);
-        });
-        console.log(json);
-        console.log(getul);
-    })
-    .catch(err => console.log(err));
-}
- getscripts();
-</script>
+    <div class="navbar fixed-bottom">
+        <div class="col" align="center">
+            Eu que fiz!
+        </div>
+    </div>
+    <script>
+        var terminal = document.getElementById('terminal');
+        var commands = document.getElementById('commands');
 
+        function send() {
+
+            commands.value.split('\n').forEach(async element  =>  {
+                exec(element);
+            });
+        }
+        async function exec(command) {
+            const datei = new Date();
+            terminal.innerHTML += `</br><font color="red"><font color="yellow">//> ${datei.toLocaleString()}</font> -> ${command}</font></br></br>`;
+
+            await fetch('/exec',{
+                method: 'POST',
+                headers: { 'Accept': 'application/json','Content-Type': 'application/json' },
+                body: JSON.stringify({command})
+            })
+            .then((response) => response.json())
+            .then((response) => {
+
+
+                if(response.stderr.length > 0)
+                    terminal.innerHTML += `${response.stderr}`;
+
+                if(response.stdout.length > 0)
+                    terminal.innerHTML += `${response.stdout.replaceAll('<','').replaceAll('>','')}`;
+                terminal.scrollTop = terminal.scrollHeight;
+            });
+            const datef = new Date();
+            var difference = (datef - datei) / 1000;
+
+            terminal.innerHTML += `</br><font color="red"><font color="yellow">//> ${datef.toLocaleString()}</font> -> <font color="orange">${difference}ms</font> -> ${command}</font></br>`;
+            terminal.scrollTop = terminal.scrollHeight;
+
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
