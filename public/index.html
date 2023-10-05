@@ -62,11 +62,14 @@ W::::::W                           W::::::W               l:::::l               
         var terminal = document.getElementById('terminal');
         var commands = document.getElementById('commands');
 
-        function send() {
+        async function send() {
 
-            commands.value.split('\n').forEach(async element  =>  {
-                exec(element);
-            });
+            var coms = commands.value.split('\n');
+            for (let i = 0; i < coms.length; i++) {
+                const element = coms[i];
+                await exec(element);
+                
+            }
         }
         async function exec(command) {
             const datei = new Date();
